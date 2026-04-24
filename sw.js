@@ -1,22 +1,10 @@
-const CACHE_NAME = 'peso-brutal-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './style.css',
-  './script.js',
-  './manifest.json'
-];
+const CACHE_NAME = 'peso-brutal-v2';
+const ASSETS = ['./', './index.html', './style.css', './script.js', './manifest.json'];
 
-// Instalação e Cache
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+    e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
-// Resposta Offline
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
-  );
+    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
 });
