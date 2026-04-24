@@ -14,95 +14,106 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// LINK DO SEU REPOSITÓRIO GITHUB
-const URL_ALIMENTOS_RAW = "https://raw.githubusercontent.com/filemonsk8-commits/controle-peso-brutal/refs/heads/main/alimentos.json"; 
-
+const URL_ALIMENTOS = "https://raw.githubusercontent.com/filemonsk8-commits/controle-peso-brutal/refs/heads/main/alimentos.json"; 
 let currentPos = "";
 let bancoLocal = [];
+let chart;
 
-// 1. REGISTRO PWA
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(() => console.log("SISTEMA_OFFLINE_ATIVADO"));
-}
-
-// 2. CARREGAR ALIMENTOS VIA GITHUB
+// CARREGAR BANCO DO GITHUB
 async function carregarBanco() {
     try {
-        const response = await fetch(URL_ALIMENTOS_RAW);
-        const data = await response.json();
+        const res = await fetch(URL_ALIMENTOS);
+        const data = await res.json();
         bancoLocal = data.lista || [];
-        console.log(`[SISTEMA] ${bancoLocal.length} ALIMENTOS_SINCRONIZADOS`);
-    } catch (err) {
-        console.error("FALHA_NA_VARREDURA_REMOTA:", err);
-    }
+        console.log("[SISTEMA] DADOS_SINCRONIZADOS");
+    } catch (e) { console.error("ERRO_VARREDURA"); }
 }
 carregarBanco();
 
-// 3. BUSCA DE ALIMENTOS
+// BUSCA
 document.getElementById('busca').addEventListener('input', (e) => {
     const termo = e.target.value.toUpperCase();
     const res = document.getElementById('resultados');
     res.innerHTML = "";
     if(termo.length < 2) return;
-
     bancoLocal.filter(i => i.n.includes(termo)).forEach(item => {
         const div = document.createElement('div');
         div.className = 'item-food';
-        div.innerHTML = `> ${item.n} <br> <small>${item.k}kcal | P:${item.p}g</small>`;
+        div.innerHTML = `> ${item.n} | ${item.k}kcal`;
         div.onclick = () => registrarConsumo(item);
         res.appendChild(div);
     });
 });
 
-// 4. REGISTRAR CONSUMO NO FIREBASE
+// REGISTRAR CONSUMO
 window.registrarConsumo = async (item) => {
-    if(!currentPos) return alert("ERRO: ACESSO NÃO AUTORIZADO. SELECIONE OPERADOR.");
-    
+    if(!currentPos) return alert("ERRO: OPERADOR NÃO IDENTIFICADO");
     await push(ref(db, `consumo/${currentPos}`), {
-        nome: item.n, 
-        kcal: item.k, 
-        prot: item.p,
-        data: new Date().toLocaleDateString('pt-BR'), // Salva a data formatada
-        timestamp: Date.now()
+        nome: item.n, kcal: item.k, prot: item.p,
+        data: new Date().toLocaleDateString('pt-BR'), timestamp: Date.now()
     });
 };
 
-// 5. SELEÇÃO DE USUÁRIO E FILTRO DE HOJE
+// SALVAR PESO
+window.salvarPeso = async () => {
+    const pesoVal = document.getElementById('input-peso').value;
+    if(!currentPos || !pesoVal) return alert("DADOS_INVALIDOS");
+    await push(ref(db, `biometria/${currentPos}`), {
+        peso: parseFloat(pesoVal),
+        data: new Date().toLocaleDateString('pt-BR'), timestamp: Date.now()
+    });
+    document.getElementById('input-peso').value = "";
+};
+
+// MUDAR USER
 window.mudarUser = (user) => {
     currentPos = user;
     document.getElementById('user-display').innerText = user.toUpperCase();
-    document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.user-access button').forEach(b => b.classList.remove('active'));
     document.getElementById(`btn-${user.toLowerCase()}`).classList.add('active');
 
     const hoje = new Date().toLocaleDateString('pt-BR');
-
-    onValue(ref(db, `consumo/${user}`), (snapshot) => {
-        const logs = snapshot.val();
+    onValue(ref(db, `consumo/${user}`), (snap) => {
+        const logs = snap.val();
         const container = document.getElementById('logs-usuario');
-        const tKcal = document.getElementById('total-kcal');
-        const tProt = document.getElementById('total-prot');
-        
-        container.innerHTML = "";
         let sk = 0, sp = 0;
-
+        container.innerHTML = "";
         if(logs) {
-            // Converte objeto em array e inverte para o mais novo aparecer primeiro
-            const itensLog = Object.values(logs).reverse();
-            
-            itensLog.forEach(l => {
-                // SÓ MOSTRA E SOMA SE FOR A DATA DE HOJE
+            Object.values(logs).reverse().forEach(l => {
                 if(l.data === hoje) {
                     sk += l.kcal; sp += l.prot;
-                    const div = document.createElement('div');
-                    div.className = 'item-food';
-                    div.style.fontSize = "0.8rem";
-                    div.style.borderLeft = "3px solid var(--red)";
-                    div.innerHTML = `[OK] ${l.nome} | ${l.kcal}kcal`;
-                    container.appendChild(div);
+                    const d = document.createElement('div');
+                    d.className = 'item-food'; d.style.fontSize = "0.7rem";
+                    d.innerHTML = `[OK] ${l.nome} | ${l.kcal}k`;
+                    container.appendChild(d);
                 }
             });
         }
-        tKcal.innerText = Math.round(sk);
-        tProt.innerText = sp.toFixed(1);
+        document.getElementById('total-kcal').innerText = Math.round(sk);
+        document.getElementById('total-prot').innerText = sp.toFixed(1);
     });
 };
+
+// GRÁFICO
+function initChart() {
+    onValue(ref(db, `biometria`), (snap) => {
+        const dados = snap.val() || {};
+        const ctx = document.getElementById('graficoPeso').getContext('2d');
+        const edu = dados.Eduardo ? Object.values(dados.Eduardo).slice(-7) : [];
+        const nad = dados.Nadia ? Object.values(dados.Nadia).slice(-7) : [];
+        
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: edu.length > nad.length ? edu.map(d => d.data) : nad.map(d => d.data),
+                datasets: [
+                    { label: 'EDUARDO', data: edu.map(d => d.peso), borderColor: '#00ff41', tension: 0.1 },
+                    { label: 'NÁDIA', data: nad.map(d => d.peso), borderColor: '#ff003c', tension: 0.1 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#888', font: { family: 'monospace' } } } } }
+        });
+    });
+}
+initChart();
