@@ -3,37 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TERMINAL // CONTROLE PESO</title>
+    <title>TERMINAL // PESO BRUTAL</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="scanner"></div>
     <div class="wrapper">
         <header>
-            <div class="logo">SISTEMA_UNITÁRIO_DE_MONITORAMENTO [v1.0]</div>
+            <div class="logo">OPERACIONAL_v1.5 // PESO_BRUTAL</div>
             <div class="user-access">
                 <button onclick="mudarUser('Eduardo')" id="btn-eduardo">USER_01: EDUARDO</button>
-                <button onclick="mudarUser('Esposa')" id="btn-esposa">USER_02: ESPOSA</button>
+                <button onclick="mudarUser('Nadia')" id="btn-nadia">USER_02: NÁDIA</button>
             </div>
         </header>
 
         <main class="grid">
-            <section class="panel search-area">
+            <section class="panel">
                 <div class="panel-header">VARREDURA_DE_ALIMENTOS</div>
-                <input type="text" id="busca" placeholder="BUSCAR NA BASE DE DADOS..." autocomplete="off">
+                <input type="text" id="busca" placeholder="PESQUISAR BASE DE DADOS..." autocomplete="off">
                 <div id="resultados" class="list-container"></div>
             </section>
 
-            <section class="panel log-area">
-                <div class="panel-header">LOG_DE_CONSUMO_DIÁRIO // <span id="user-display">---</span></div>
+            <section class="panel">
+                <div class="panel-header">MONITORAMENTO // <span id="user-display">---</span></div>
+                
+                <div class="weight-input-group">
+                    <input type="number" id="input-peso" step="0.1" placeholder="00.0kg">
+                    <button onclick="salvarPeso()" class="btn-action">REGISTRAR_PESO</button>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="graficoPeso"></canvas>
+                </div>
+
                 <div class="totalizer">
                     <div>KCAL: <span id="total-kcal">0</span></div>
                     <div>PROT: <span id="total-prot">0</span>g</div>
                 </div>
-                <div id="logs-usuario" class="list-container"></div>
+                
+                <div id="logs-usuario" class="list-container" style="height: 150px;"></div>
             </section>
         </main>
     </div>
