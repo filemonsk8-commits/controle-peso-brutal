@@ -3,60 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TERMINAL // PESO BRUTAL</title>
+    <title>SISTEMA BRUTAL // V3</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <div class="logo">SISTEMA_UNITÁRIO_v2.5</div>
-            <div class="tabs-control">
-                <button class="tab-btn active" id="tab-eduardo" onclick="mudarAba('Eduardo')">EDUARDO</button>
-                <button class="tab-btn" id="tab-nadia" onclick="mudarAba('Nadia')">NÁDIA</button>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="side-logo">BRUTAL_LABS</div>
+            <nav class="user-nav">
+                <button onclick="mudarAba('Eduardo')" id="side-eduardo" class="nav-item active">
+                    <span class="icon">👤</span> EDUARDO
+                </button>
+                <button onclick="mudarAba('Nadia')" id="side-nadia" class="nav-item">
+                    <span class="icon">👤</span> NÁDIA
+                </button>
+            </nav>
+            <div class="side-footer">v3.0.42_STABLE</div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="indicator">MODO_OPERACIONAL // <span id="display-user">EDUARDO</span></div>
+            </header>
+
+            <div class="dashboard-grid">
+                <section class="card search-card">
+                    <div class="card-header">VARREDURA_BASE</div>
+                    <input type="text" id="busca" placeholder="O QUE VOCÊ COMEU?" autocomplete="off">
+                    <div id="resultados" class="food-results"></div>
+                </section>
+
+                <section class="card status-card">
+                    <div class="card-header">BIOMETRIA_DIÁRIA</div>
+                    <div class="weight-row">
+                        <input type="number" id="input-peso" step="0.1" placeholder="PESO">
+                        <button onclick="salvarPeso()" class="btn-green">GRAVAR</button>
+                    </div>
+                    
+                    <div class="macros-display">
+                        <div class="macro-box">
+                            <span class="val" id="total-kcal">0</span>
+                            <span class="lab">KCAL_HOJE</span>
+                        </div>
+                        <div class="macro-box">
+                            <span class="val" id="total-prot">0</span>
+                            <span class="lab">PROT_HOJE</span>
+                        </div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <canvas id="graficoPeso"></canvas>
+                    </div>
+
+                    <div class="card-header">LOG_DE_CONSUMO</div>
+                    <div id="logs-usuario" class="logs-container"></div>
+                </section>
             </div>
-        </header>
+        </main>
 
         <div id="modal-porcao" class="modal">
-            <div class="modal-content">
-                <h3 id="modal-nome-alimento">---</h3>
-                <p>CÁLCULO PROPORCIONAL (BASE 100g/un)</p>
-                <input type="number" id="input-qtd" placeholder="QTD (ex: 150 ou 2)">
-                <div class="modal-buttons">
-                    <button onclick="confirmarConsumo()" class="btn-save">ADICIONAR</button>
-                    <button onclick="fecharModal()" class="btn-cancel">CANCELAR</button>
+            <div class="modal-box">
+                <h2 id="m-nome">---</h2>
+                <div class="portion-control">
+                    <button class="btn-step" onclick="alterarQtd(-10)">-</button>
+                    <div class="qtd-display">
+                        <span id="display-qtd">100</span>
+                        <small id="unidade-label">g</small>
+                    </div>
+                    <button class="btn-step" onclick="alterarQtd(10)">+</button>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-confirm" onclick="confirmarConsumo()">CONFIRMAR_REGISTRO</button>
+                    <button class="btn-cancel" onclick="fecharModal()">CANCELAR</button>
                 </div>
             </div>
         </div>
-
-        <main class="main-layout">
-            <section class="panel-search">
-                <div class="panel-header">VARREDURA_BASE_DADOS</div>
-                <input type="text" id="busca" placeholder="BUSCAR ALIMENTO..." autocomplete="off">
-                <div id="resultados" class="list-container"></div>
-            </section>
-
-            <section class="panel-data">
-                <div class="panel-header">PAINEL_DE_CONTROLE // <span id="display-aba">EDUARDO</span></div>
-                
-                <div class="biometria-row">
-                    <input type="number" id="input-peso" step="0.1" placeholder="PESO kg">
-                    <button onclick="salvarPeso()" class="btn-action">GRAVAR_PESO</button>
-                </div>
-                
-                <div class="chart-box">
-                    <canvas id="graficoPeso"></canvas>
-                </div>
-
-                <div class="status-bar">
-                    <div class="status-item">KCAL: <span id="total-kcal">0</span></div>
-                    <div class="status-item">PROT: <span id="total-prot">0</span>g</div>
-                </div>
-
-                <div id="logs-usuario" class="list-container log-list"></div>
-            </section>
-        </main>
     </div>
     <script type="module" src="script.js"></script>
 </body>
