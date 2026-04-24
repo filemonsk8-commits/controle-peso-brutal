@@ -1,1 +1,102 @@
+:root {
+    --green: #00ff41;
+    --red: #ff003c;
+    --bg: #0d0d0d;
+    --panel: #161616;
+}
 
+body {
+    background: var(--bg);
+    color: #aaa;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    overflow: hidden;
+    user-select: none; /* Aspecto de App */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.wrapper { padding: 20px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
+
+header {
+    border: 2px solid #333;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000;
+}
+
+.logo { color: var(--green); font-weight: bold; text-shadow: 0 0 5px var(--green); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; margin-top: 20px; overflow: hidden; }
+
+/* Ajuste para Mobile */
+@media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    header { flex-direction: column; gap: 10px; }
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    position: relative;
+}
+
+.panel-header {
+    color: #555;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #222;
+}
+
+input {
+    background: #000;
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 12px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.list-container { flex: 1; overflow-y: auto; margin-top: 10px; border: 1px solid #222; background: #0a0a0a; }
+
+.item-food {
+    padding: 15px;
+    border-bottom: 1px solid #222;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.item-food:hover { background: #222; color: var(--green); }
+
+.totalizer {
+    display: flex;
+    justify-content: space-around;
+    background: #000;
+    padding: 15px;
+    border: 1px solid var(--red);
+    color: var(--red);
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+button {
+    background: transparent;
+    border: 1px solid #444;
+    color: #666;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+button.active { border-color: var(--red); color: var(--red); box-shadow: 0 0 10px var(--red); }
+
+.scanner {
+    position: fixed; width: 100%; height: 2px; background: rgba(0,255,65,0.05);
+    top: 0; animation: scan 8s linear infinite; z-index: 10; pointer-events: none;
+}
+
+@keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
