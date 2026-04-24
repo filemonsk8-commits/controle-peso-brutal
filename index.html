@@ -20,7 +20,6 @@
                     <span class="icon">👤</span> NÁDIA
                 </button>
             </nav>
-            <div class="side-footer">v3.0.42_STABLE</div>
         </aside>
 
         <main class="main-content">
@@ -38,7 +37,7 @@
                 <section class="card status-card">
                     <div class="card-header">BIOMETRIA_DIÁRIA</div>
                     <div class="weight-row">
-                        <input type="number" id="input-peso" step="0.1" placeholder="PESO">
+                        <input type="number" id="input-peso" step="0.1" placeholder="PESO KG">
                         <button onclick="salvarPeso()" class="btn-green">GRAVAR</button>
                     </div>
                     
@@ -65,7 +64,7 @@
 
         <div id="modal-porcao" class="modal">
             <div class="modal-box">
-                <h2 id="m-nome">---</h2>
+                <h2 id="m-nome">ALIMENTO</h2>
                 <div class="portion-control">
                     <button class="btn-step" onclick="alterarQtd(-10)">-</button>
                     <div class="qtd-display">
@@ -75,12 +74,13 @@
                     <button class="btn-step" onclick="alterarQtd(10)">+</button>
                 </div>
                 <div class="modal-actions">
-                    <button class="btn-confirm" onclick="confirmarConsumo()">CONFIRMAR_REGISTRO</button>
+                    <button class="btn-confirm" onclick="confirmarConsumo()">CONFIRMAR</button>
                     <button class="btn-cancel" onclick="fecharModal()">CANCELAR</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script type="module" src="script.js"></script>
 </body>
 </html>
