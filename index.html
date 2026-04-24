@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TERMINAL // CONTROLE PESO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <div class="scanner"></div>
+    <div class="wrapper">
+        <header>
+            <div class="logo">SISTEMA_UNITÁRIO_DE_MONITORAMENTO [v1.0]</div>
+            <div class="user-access">
+                <button onclick="mudarUser('Eduardo')" id="btn-eduardo">USER_01: EDUARDO</button>
+                <button onclick="mudarUser('Esposa')" id="btn-esposa">USER_02: ESPOSA</button>
+            </div>
+        </header>
 
+        <main class="grid">
+            <section class="panel search-area">
+                <div class="panel-header">VARREDURA_DE_ALIMENTOS</div>
+                <input type="text" id="busca" placeholder="BUSCAR NA BASE DE DADOS..." autocomplete="off">
+                <div id="resultados" class="list-container"></div>
+            </section>
+
+            <section class="panel log-area">
+                <div class="panel-header">LOG_DE_CONSUMO_DIÁRIO // <span id="user-display">---</span></div>
+                <div class="totalizer">
+                    <div>KCAL: <span id="total-kcal">0</span></div>
+                    <div>PROT: <span id="total-prot">0</span>g</div>
+                </div>
+                <div id="logs-usuario" class="list-container"></div>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
